@@ -3,11 +3,23 @@ import javascriptLogo from './javascript.svg'
 import { setupSubmitForm } from './src/modules/submitForm'
 import { isOnline } from './src/modules/checkInternetStatus'
 import StorageManager from './src/helpers/storageHandler';
+import UUIDv4 from './src/libs/TiagoF2/libs/UUIDv4';
+import TypeChecker from './src/libs/TiagoF2/libs/TypeChecker';
+import { Validator } from './src/libs/TiagoF2/libs/Validator';
+import FormHandler from './src/modules/FormHandler';
+import { runTempScript } from './TempScript';
 
 StorageManager.pushItem('alfabeto', { a: 'A,a' });
 
 window.sm = StorageManager
-window.online = true
+window.TypeChecker = TypeChecker
+window.Validator = Validator
+window.FormHandler = FormHandler
+window.UUIDv4 = UUIDv4
+window.online = true // TODO: mudar para botão
+
+runTempScript(); // TODO: validar para ser executado apenas em DEV
+
 let internetStatus = isOnline() ? 'Online' : 'Offline'
 let internetStatusClass = isOnline() ? 'online' : 'offline'
 document.querySelector('#app').innerHTML = `

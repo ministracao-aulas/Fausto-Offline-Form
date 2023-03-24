@@ -1,16 +1,17 @@
 import TypeChecker from "../../libs/TiagoF2/libs/TypeChecker";
 import UUIDv4 from "../../libs/TiagoF2/libs/UUIDv4"
 import FormSubmitInfo from "../FormSubmitInfo";
+import CoreValidator from "../CoreValidator";
 
 export default class FormSchema {
     constructor(
         schemaId,
-        formRules,
+        formValidator,
         formSubmitInfo // Instance of [TODO] FormSubmitInfo
     ) {
         [
             ['schemaId', UUIDv4.checkIfValidUUID(schemaId)],
-            ['formRules', TypeChecker.typeIs(formRules, 'object')],
+            ['formValidator', (formValidator instanceof CoreValidator)],
             ['formSubmitInfo', (formSubmitInfo instanceof FormSubmitInfo)],
         ].forEach(item => {
             let [itemName, result] = item;
@@ -21,7 +22,7 @@ export default class FormSchema {
         })
 
         this.schemaId = schemaId
-        this.formRules = formRules
+        this.formValidator = formValidator
         this.formSubmitInfo = formSubmitInfo
     }
 
@@ -32,6 +33,8 @@ export default class FormSchema {
         if (!isObject) {
             throw `Error: formInputs must be an Object . [FormSchema.validateForm]`
         }
+
+        this.formValidator.validate(formInputs);
     }
 
     getID() {
@@ -39,7 +42,7 @@ export default class FormSchema {
     }
 
     async submitForm(formInputs) {
-        this.validateForm(formInputs, 'Schema submitForm')
+        this.validateForm(formInputs);
         // TODO: fetch...
         // dispatch event
 

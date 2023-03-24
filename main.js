@@ -1,6 +1,6 @@
 import './style.css'
 import javascriptLogo from './javascript.svg'
-import { setupSubmitForm } from './src/modules/submitForm'
+import { setupSubmitForm } from './src/modules/newSubmitForm'
 import { isOnline } from './src/modules/checkInternetStatus'
 import StorageManager from './src/helpers/storageHandler';
 import UUIDv4 from './src/libs/TiagoF2/libs/UUIDv4';

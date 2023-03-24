@@ -55,7 +55,7 @@ export default class FormHandler {
 
         // TODO: validar aqui se os dados enviados são válidos
         try {
-            formSchema.validateForm()
+            formSchema.validateForm(formData)
         } catch (error) {
             // dispatch event 'error'
             return statusFail('Dados inválidos', [error])
@@ -79,7 +79,7 @@ export default class FormHandler {
             // dispatch event 'stored'
         }
 
-        let submit = await formSchema.submitForm()
+        let submit = await formSchema.submitForm(formData)
 
         if (submit) {
             status.push('submited')

@@ -16,10 +16,18 @@ export default class FormSubmitInfo {
         headers = {},
         options = {}
     ) {
-        this.url = url;
+        this.setUrl(url);
         this.method = method;
         this.headers = headers;
         this.options = options;
+    }
+
+    setUrl(url) {
+        if (!TypeChecker.typeIs(url, 'string') || !TypeChecker.isValidUrl(url)) {
+            throw `Error: Invalid URL`
+        }
+
+        this.url = url;
     }
 
     setMethod(method) {
@@ -27,14 +35,11 @@ export default class FormSubmitInfo {
             this.method = 'GET'
         }
 
-        if (!method || !TypeChecker.typeIs(method, 'string')) {
-            return
-        }
-
-        method = String(method).toLocaleUpperCase().trim();
+        method = method && TypeChecker.typeIs(method, 'string')
+            ? String(method).toLocaleUpperCase().trim() : '';
 
         if (!Array(this.ALLOWED_METHODS).includes(method) || !(method.length)) {
-            return
+            throw `Error: Invalid METHOD`
         }
 
         this.method = method
@@ -44,8 +49,12 @@ export default class FormSubmitInfo {
         return this.method || 'GET'
     }
 
+    getUrl() {
+        return this.url
+    }
+
     getHeaders() {
-        return this.headers
+        return this.headers || {}
     }
 
     getOptions() {

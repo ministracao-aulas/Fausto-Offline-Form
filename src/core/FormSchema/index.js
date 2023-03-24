@@ -1,3 +1,4 @@
+import TypeChecker from "../../libs/TiagoF2/libs/TypeChecker";
 import UUIDv4 from "../../libs/TiagoF2/libs/UUIDv4"
 import FormSubmitInfo from "../FormSubmitInfo";
 
@@ -26,8 +27,10 @@ export default class FormSchema {
 
     // TODO: validar os dados enviados (required, regex rules, length, etc)
     validateForm(formInputs) {
-        if (! TypeChecker.typeIs(formInputs, 'Object')) {
-            throw `Error: [FormSchema.validateForm] formInputs must be an Object`
+        let isObject = TypeChecker.typeIs(formInputs, 'Object');
+
+        if (!isObject) {
+            throw `Error: formInputs must be an Object . [FormSchema.validateForm]`
         }
     }
 
@@ -36,16 +39,21 @@ export default class FormSchema {
     }
 
     async submitForm(formInputs) {
-        this.validateForm(formInputs)
+        this.validateForm(formInputs, 'Schema submitForm')
         // TODO: fetch...
         // dispatch event
 
+        let url = this.formSubmitInfo.getUrl();
+
         // WIP
-        await fetch("https://jsonplaceholder.typicode.com/posts/1", {
-            "headers": this.formSubmitInfo.getHeaders(),
-            "method": this.formSubmitInfo.getMethod(),
-            ...this.formSubmitInfo.getOptions()
-        });
+        await fetch(
+            url,
+            {
+                "headers": this.formSubmitInfo.getHeaders(),
+                "method": this.formSubmitInfo.getMethod(),
+                ...this.formSubmitInfo.getOptions()
+            }
+        );
         return true
     }
 }

@@ -8,6 +8,8 @@ import TypeChecker from './src/libs/TiagoF2/libs/TypeChecker';
 import { Validator } from './src/libs/TiagoF2/libs/Validator';
 import FormHandler from './src/modules/FormHandler';
 import { runTempScript } from './TempScript';
+import FormGenerator from './src/libs/TiagoF2/libs/FormGenerator';
+// import FormGenerator from './src/libs/TiagoF2/libs/FormGenerator';
 
 StorageManager.pushItem('alfabeto', { a: 'A,a' });
 
@@ -20,8 +22,47 @@ window.online = true // TODO: mudar para botão
 
 runTempScript(); // TODO: validar para ser executado apenas em DEV
 
-let internetStatus = isOnline() ? 'Online' : 'Offline'
-let internetStatusClass = isOnline() ? 'online' : 'offline'
+let internetStatus = isOnline() ? 'Online' : 'Offline';
+let internetStatusClass = isOnline() ? 'online' : 'offline';
+
+const inputs = [
+    {
+        // <input type="number" data-item-id="userId" placeholder="userId" />
+        tag: 'input',
+        name: 'user_id',
+        labels: {
+            'pt_BR': 'User ID',
+        },
+        attributes: {
+            type: 'number',
+            'data-item-id': 'userId',
+            placeholder: 'userId',
+        },
+        rules: [
+            'required',
+            'between:1,100',
+        ],
+        classes: [],
+    },
+    {
+        // <button id="submitform" type="button">Submit form</button>
+        tag: 'button',
+        labels: {
+            'pt_BR': 'Submit form',
+        },
+        attributes: {
+            id: 'submitform',
+            type: 'button',
+        },
+        rules: [
+            'required',
+            'between:1,100',
+        ],
+    },
+];
+
+let formGenerator = new FormGenerator(inputs);
+
 document.querySelector('#app').innerHTML = `
   <div>
     <h5 class="text-align-center">APP Offline form</h5>
@@ -45,13 +86,8 @@ document.querySelector('#app').innerHTML = `
 
       </ul>
     </div>
-    <div class="card">
-      <div>
-        <input type="number" data-item-id="userId" placeholder="userId" />
-      </div>
 
-      <button id="submitform" type="button">Submit form</button>
-    </div>
+    <div class="card"></div>
 
     <p class="read-the-docs">
       <strong>Result:</strong>
@@ -60,5 +96,5 @@ document.querySelector('#app').innerHTML = `
     </p>
   </div>
 `
-
-setupSubmitForm(document.querySelector('#submitform'))
+formGenerator.putInputs(document.querySelector('div.card'));
+setupSubmitForm(document.querySelector('#submitform'));

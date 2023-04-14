@@ -13,11 +13,15 @@ import { showAlertMessage } from "./alertMessage"
 import { isOnline } from "./checkInternetStatus"
 
 export function setupSubmitForm(element) {
-  let resultMessageElement = document.querySelector('[data-item-id="result"]')
+    if (!element) {
+        return;
+    }
 
-  const setSubmitForm = async () => {
+    let resultMessageElement = document.querySelector('[data-item-id="result"]')
 
-    let formValidator = new CoreValidator({
+    const setSubmitForm = async () => {
+
+        let formValidator = new CoreValidator({
             userId: [
                 'required',
                 // 'positiveNumber',
@@ -29,54 +33,54 @@ export function setupSubmitForm(element) {
         }, {
             userId: 'User ID'
         }
-    );
+        );
 
-    let formSchema = new FormSchema(
-        'c535b0ee-e734-4436-a23e-7e376f206002', // fake ID, Esse ID será retornado da API
-        formValidator,
-        (new FormSubmitInfo('https://jsonplaceholder.typicode.com/posts/1'))
-    );
+        let formSchema = new FormSchema(
+            'c535b0ee-e734-4436-a23e-7e376f206002', // fake ID, Esse ID será retornado da API
+            formValidator,
+            (new FormSubmitInfo('https://jsonplaceholder.typicode.com/posts/1'))
+        );
 
-    if (!isOnline()) {
-      showAlertMessage('Offline')
-      return
+        if (!isOnline()) {
+            showAlertMessage('Offline')
+            return
+        }
+
+        let userIdInput = document.querySelector('input[data-item-id="userId"]')
+
+        if (!userIdInput) {
+            showAlertMessage('Invalid userIdInput')
+            return
+        }
+
+        let userId = userIdInput.value
+
+        // if (!userId) {
+        //   showAlertMessage('Invalid userId')
+        //   return
+        // }
+
+        let formInputs = {
+            userId: userId
+        };
+
+        try {
+            formSchema.validateForm(formInputs);
+        } catch (error) {
+            showAlertMessage(error)
+            return
+        }
+
+        let response = await fetch(`http://jsonplaceholder.typicode.com/posts/${userId}`)
+        let requestResult = response.ok ? 'success' : 'fail';
+
+        showAlertMessage(
+            response.ok ? 'Submited successfully' : 'Fail on request',
+            response.ok ? 'success' : 'error'
+        )
+
+        resultMessageElement.innerHTML = `The request result: ${requestResult}. Code: ${response.status}`
     }
 
-    let userIdInput = document.querySelector('input[data-item-id="userId"]')
-
-    if (!userIdInput) {
-      showAlertMessage('Invalid userIdInput')
-      return
-    }
-
-    let userId = userIdInput.value
-
-    // if (!userId) {
-    //   showAlertMessage('Invalid userId')
-    //   return
-    // }
-
-    let formInputs = {
-        userId: userId
-    };
-
-    try {
-        formSchema.validateForm(formInputs);
-    } catch (error) {
-        showAlertMessage(error)
-        return
-    }
-
-    let response = await fetch(`http://jsonplaceholder.typicode.com/posts/${userId}`)
-    let requestResult = response.ok ? 'success' : 'fail';
-
-    showAlertMessage(
-      response.ok ? 'Submited successfully' : 'Fail on request',
-      response.ok ? 'success' : 'error'
-    )
-
-    resultMessageElement.innerHTML = `The request result: ${requestResult}. Code: ${response.status}`
-  }
-
-  element.addEventListener('click', () => setSubmitForm())
+    element.addEventListener('click', () => setSubmitForm())
 }
